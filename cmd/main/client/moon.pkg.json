@@ -3,6 +3,7 @@
     "moonbitlang/async/http",
     "moonbitlang/async/socket",
     "moonbitlang/async/io",
-    "username/lock_sync_mbt/cmd/main/common"
+    "username/lock_sync_mbt/cmd/main/common",
+    "moonbitlang/async/process"
   ]
 }

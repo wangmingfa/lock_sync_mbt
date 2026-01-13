@@ -12,12 +12,7 @@ pub async fn run(client_config : @common.ClientConfig) -> Unit {
     let params = reader.read_all().text()
     println("url: \{req.path}, params: \{params}")
     if url == "/lock" {
-      return handle_lock(
-        req,
-        conn,
-        client_config.token,
-        client_config.allowed_servers,
-      )
+      return handle_lock(req, conn, client_config.token, client_config)
     }
     send_404(conn, data="`\{url}` not found")
   })
@@ -34,7 +29,7 @@ async fn handle_lock(
   req : @http.Request,
   conn : @http.ServerConnection,
   token : String,
-  allowed_servers : FixedArray[String],
+  client_config : @common.ClientConfig,
 ) -> Unit {
   let headers = req.headers
 
@@ -48,11 +43,39 @@ async fn handle_lock(
   guard get_header(headers, "x-forwarded-for") is Some(ip) else {
     return send_403(conn, data="IP Not Allowed")
   }
+  let allowed_servers = client_config.allowed_servers
   guard allowed_servers.contains(ip) is true else {
     println("不允许的客户端ip: \{ip}")
     return send_403(conn, data="IP Not Allowed")
   }
+  lock_screen(client_config.os)
   send_200(conn)
+}
+
+///|
+async fn lock_screen(os : String) -> Unit {
+  match os {
+    "windows" => {
+      let _ = @process.run("rundll32.exe", ["user32.dll,LockWorkStation"])
+
+    }
+    "linux" => {
+      let _ = @process.run("loginctl", ["lock-session"])
+
+    }
+    "macos" => {
+      let _ = @process.run("CGSession", ["-suspend"])
+
+    }
+    _ => println("不支持的操作系统 \{os}")
+  }
+}
+
+///|
+#cfg(platform="linux")
+async fn lock_screen() -> Unit {
+  let _ = @process.run("loginctl", ["lock-session"])
+
 }
 
 ///|

@@ -74,7 +74,7 @@ moon run cmd/main client
   // 客户端配置
   "client": {
     "token": "认证令牌",
-    "os": "windows",          // 操作系统类型
+    "os": "windows",          // 操作系统类型 windows/linux/macos
     "listen": "0.0.0.0:9123", // 监听地址和端口
     "allowed_servers": [
       "服务端IP"
