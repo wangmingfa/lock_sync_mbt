@@ -1,0 +1,10 @@
+{
+  "import": [
+    "username/lock_sync_mbt/cmd/lib",
+    "moonbitlang/async",
+    "username/lock_sync_mbt/cmd/main/common",
+    "moonbitlang/async/http",
+    "moonbitlang/async/process",
+    "username/lock_sync_mbt/cmd/main/client"
+  ],
+}

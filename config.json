@@ -1,0 +1,19 @@
+{
+    "server": {
+        "token": "aB3dE6fG7hJk9LmN2pQ4rStUvWxYz01",
+        "clients": [
+            {
+                "name": "win11",
+                "url": "http://172.25.48.48:9123/lock"
+            }
+        ]
+    },
+    "client": {
+        "token": "aB3dE6fG7hJk9LmN2pQ4rStUvWxYz01",
+        "os": "windows",
+        "listen": "0.0.0.0:9123",
+        "allowed_servers": [
+            "172.25.48.139"
+        ]
+    }
+}

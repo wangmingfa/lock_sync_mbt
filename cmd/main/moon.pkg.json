@@ -1,0 +1,14 @@
+{
+  "is-main": true,
+  "import": [
+    "moonbitlang/async",
+    "username/lock_sync_mbt/cmd/main/server",
+    "username/lock_sync_mbt/cmd/main/client",
+    "username/lock_sync_mbt/cmd/main/common"
+  ],
+  "link": {
+    "native": {
+      "cc-link-flags": "-framework CoreFoundation"
+    }
+  }
+}

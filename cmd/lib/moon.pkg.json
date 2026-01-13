@@ -1,0 +1,9 @@
+{
+  "is-main": false,
+  "import": [
+  ],
+  "supported-targets": ["native"],
+  "native-stub": [
+    "c/macos_lock.c"
+  ]
+}
