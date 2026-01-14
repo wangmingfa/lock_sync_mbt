@@ -53,7 +53,7 @@ async fn handle_lock(
 }
 
 ///|
-async fn lock_screen() -> Unit {
+pub async fn lock_screen() -> Unit {
   let (code, output) = match @lib.get_platform() {
     Windows => {
       println("Windows锁屏")
@@ -67,7 +67,12 @@ async fn lock_screen() -> Unit {
     }
     MacOS => {
       println("MacOS锁屏")
-      @process.collect_output_merged("CGSession", ["-suspend"])
+      // 请注意，此操作需要授权：设置->隐私与安全性->辅助功能->点击+，添加对应的程序
+      // 如果是在独立的终端应用运行当前程序，则添加对应的终端应用
+      // 如果是在vscode等IDE里面，则添加对应的IDE即可
+      @process.collect_output_merged("osascript", [
+        "-e", "tell application \"System Events\" to key code 12 using {control down, command down}",
+      ])
     }
     _ => {
       println("不支持的操作系统，无法锁屏")
