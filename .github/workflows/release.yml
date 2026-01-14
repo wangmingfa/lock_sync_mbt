@@ -67,17 +67,14 @@ jobs:
         if: matrix.os_name != 'windows'
         shell: bash
         run: |
-          moon version --all
-          moon update
-          moon build
+          chmod +x ./build.sh
+          ./build.sh
 
       - name: Check & Build (Windows)
         if: matrix.os_name == 'windows'
         shell: powershell
         run: |
-          moon version --all
-          moon update
-          moon build
+          ./build.ps1
 
       # -------------------------
       # 验证产物
