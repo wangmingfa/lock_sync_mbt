@@ -54,23 +54,29 @@ async fn handle_lock(
 
 ///|
 async fn lock_screen() -> Unit {
-  match @lib.get_platform() {
+  let (code, output) = match @lib.get_platform() {
     Windows => {
       println("Windows锁屏")
-      let _ = @process.run("rundll32.exe", ["user32.dll,LockWorkStation"])
-
+      @process.collect_output_merged("rundll32.exe", [
+        "user32.dll,LockWorkStation",
+      ])
     }
     Linux => {
       println("Linux锁屏")
-      let _ = @process.run("loginctl", ["lock-session"])
-
+      @process.collect_output_merged("loginctl", ["lock-session"])
     }
     MacOS => {
       println("MacOS锁屏")
-      let _ = @process.run("CGSession", ["-suspend"])
-
+      @process.collect_output_merged("CGSession", ["-suspend"])
     }
-    _ => println("不支持的操作系统，无法锁屏")
+    _ => {
+      println("不支持的操作系统，无法锁屏")
+      panic()
+    }
+  }
+  if code != 0 {
+    println("锁屏失败：")
+    println(output.text())
   }
 }
 
