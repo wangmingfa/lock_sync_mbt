@@ -20,7 +20,7 @@ pub async fn run(server_config : @common.ServerConfig) -> Unit {
     @lib.lock_listen(@lib.LockState::UnLocked)
     println("已解锁🔓")
     // 解锁后延迟启动应用，防止无法启动应用
-    @async.sleep(5000)
+    @async.sleep(2000)
     start_app(DESKFLOW_APP_NAME, DESKFLOW_APP_PATH)
     @async.pause()
   }
