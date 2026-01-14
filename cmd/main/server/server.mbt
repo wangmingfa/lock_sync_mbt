@@ -6,8 +6,8 @@ const DESKFLOW_APP_PATH = "/Applications/Deskflow.app"
 
 ///|
 pub async fn run(server_config : @common.ServerConfig) -> Unit {
-  if @lib.is_linux() {
-    println("暂不支持linux作为服务端")
+  if @lib.match_platform([Windows, Linux]) {
+    println("暂不支持Windows、Linux作为服务端")
     return
   }
   while true {
