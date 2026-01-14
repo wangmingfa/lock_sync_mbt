@@ -1,0 +1,198 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  # =========================
+  # 1️⃣ Build Matrix
+  # =========================
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            os_name: linux
+            artifact_path: _build/native/release/build/cmd/main/main.exe
+            ext: ""
+          - runner: macos-latest
+            os_name: macos
+            artifact_path: _build/native/release/build/cmd/main/main.exe
+            ext: ""
+          - runner: windows-latest
+            os_name: windows
+            artifact_path: _build/native/release/build/cmd/main/main.exe
+            ext: ".exe"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # -------------------------
+      # MoonBit 安装
+      # -------------------------
+      - name: Setup MoonBit (Linux / macOS)
+        if: matrix.os_name != 'windows'
+        shell: bash
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+
+      - name: Setup MoonBit (Windows)
+        if: matrix.os_name == 'windows'
+        shell: powershell
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      # -------------------------
+      # Windows：初始化 MSVC
+      # -------------------------
+      - name: Setup MSVC (Windows)
+        if: matrix.os_name == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # -------------------------
+      # Build
+      # -------------------------
+      - name: Check & Build (Linux / macOS)
+        if: matrix.os_name != 'windows'
+        shell: bash
+        run: |
+          moon version --all
+          moon update
+          moon build
+
+      - name: Check & Build (Windows)
+        if: matrix.os_name == 'windows'
+        shell: powershell
+        run: |
+          moon version --all
+          moon update
+          moon build
+
+      # -------------------------
+      # 验证产物
+      # -------------------------
+      - name: Verify artifact
+        shell: bash
+        run: test -f ${{ matrix.artifact_path }}
+
+      # -------------------------
+      # 架构检测
+      # -------------------------
+      - name: Detect architecture (Linux / macOS)
+        if: matrix.os_name == 'linux' || matrix.os_name == 'macos'
+        shell: bash
+        run: |
+          case "$(uname -m)" in
+            x86_64|amd64) ARCH=x86_64 ;;
+            arm64|aarch64) ARCH=arm64 ;;
+            *) ARCH=unknown ;;
+          esac
+          echo "ARCH=$ARCH" >> $GITHUB_ENV
+
+      - name: Detect architecture (Windows)
+        if: matrix.os_name == 'windows'
+        shell: powershell
+        run: |
+          $arch = switch ($Env:PROCESSOR_ARCHITECTURE) {
+            "AMD64" { "x86_64" }
+            "ARM64" { "arm64" }
+            default { "unknown" }
+          }
+          echo "ARCH=$arch" >> $Env:GITHUB_ENV
+
+      # -------------------------
+      # UPX 压缩
+      # -------------------------
+      - name: Install UPX (Linux)
+        if: matrix.os_name == 'linux'
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y upx-ucl
+          upx --version
+
+      - name: Install UPX (Windows)
+        if: matrix.os_name == 'windows'
+        shell: powershell
+        run: |
+          winget install --id UPX.UPX -e --accept-package-agreements --accept-source-agreements
+
+          # 1. 强制刷新当前会话的环境变量（这一步很关键，这样才能在powershell中使用）
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+          # 2. 找到 UPX 的实际安装位置
+          # 我们通过命令动态获取它
+          $upxPath = Split-Path (Get-Command upx.exe).Source
+
+          # 3. 关键：将路径写入 GITHUB_PATH（这样才能在bash中使用upx）
+          # 这样后续所有的 Step（包括 bash）都能找到它
+          echo "$upxPath" >> $env:GITHUB_PATH
+
+          upx --version
+
+      # - name: Install UPX (macOS)
+      #   if: matrix.os_name == 'macos'
+      #   shell: bash
+      #   run: |
+      #     brew install upx
+      #     upx --version
+
+      - name: Compress executable (Linux / Windows)
+        if: matrix.os_name == 'linux' || matrix.os_name == 'windows'
+        shell: bash
+        run: |
+          echo "Compressing with UPX..."
+          upx --best ${{ matrix.artifact_path }}
+
+      # -------------------------
+      # 重命名产物
+      # -------------------------
+      - name: Rename artifact
+        shell: bash
+        run: |
+          VERSION=${{ github.ref_name }}
+          cp ${{ matrix.artifact_path }} fget-${VERSION}-${{ matrix.os_name }}-${ARCH}${{ matrix.ext }}
+          ls -lh fget-*
+
+      # -------------------------
+      # 上传 artifact
+      # -------------------------
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fget-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}
+          path: fget-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}${{ matrix.ext }}
+
+  # =========================
+  # 2️⃣ Release
+  # =========================
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: dist/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
