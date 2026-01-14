@@ -20,15 +20,15 @@ jobs:
         include:
           - runner: ubuntu-latest
             os_name: linux
-            artifact_path: _build/native/release/build/cmd/main/main.exe
+            artifact_path: target/native/release/build/cmd/main/main.exe
             ext: ""
           - runner: macos-latest
             os_name: macos
-            artifact_path: _build/native/release/build/cmd/main/main.exe
+            artifact_path: target/native/release/build/cmd/main/main.exe
             ext: ""
           - runner: windows-latest
             os_name: windows
-            artifact_path: _build/native/release/build/cmd/main/main.exe
+            artifact_path: target/native/release/build/cmd/main/main.exe
             ext: ".exe"
 
     steps:
@@ -159,8 +159,8 @@ jobs:
         shell: bash
         run: |
           VERSION=${{ github.ref_name }}
-          cp ${{ matrix.artifact_path }} fget-${VERSION}-${{ matrix.os_name }}-${ARCH}${{ matrix.ext }}
-          ls -lh fget-*
+          cp ${{ matrix.artifact_path }} lock_sync_mbt-${VERSION}-${{ matrix.os_name }}-${ARCH}${{ matrix.ext }}
+          ls -lh lock_sync_mbt-*
 
       # -------------------------
       # 上传 artifact
@@ -168,8 +168,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fget-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}
-          path: fget-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}${{ matrix.ext }}
+          name: lock_sync_mbt-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}
+          path: lock_sync_mbt-${{ github.ref_name }}-${{ matrix.os_name }}-${{ env.ARCH }}${{ matrix.ext }}
 
   # =========================
   # 2️⃣ Release

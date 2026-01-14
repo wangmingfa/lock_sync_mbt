@@ -30,7 +30,7 @@ moon build --release
 ARCH_NAME=$(uname -m)
 # 可执行文件路径
 EXE_PATH="lock_sync_mbt-$OS_NAME-$ARCH_NAME.exe"
-cp _build/native/release/build/cmd/main/main.exe "$EXE_PATH"
+cp target/native/release/build/cmd/main/main.exe "$EXE_PATH"
 # 定义颜色变量
 RED='\033[0;31m'
 # GREEN='\033[0;32m'

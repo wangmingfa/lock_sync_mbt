@@ -1,4 +1,4 @@
-# 1. 定义文件路径
+﻿# 1. 定义文件路径
 $TARGET_FILE = "cmd/main/moon.pkg.json"
 $BACKUP_FILE = "$TARGET_FILE.bak"
 
@@ -22,7 +22,7 @@ try {
     $ARCH_NAME = $env:PROCESSOR_ARCHITECTURE
     if ($ARCH_NAME -eq 'AMD64') { $ARCH_NAME = 'x86_64' }
 
-    Copy-Item "_build/native/release/build/cmd/main/main.exe" "lock_sync_mbt-$OS_NAME-$ARCH_NAME.exe"
+    Copy-Item "target/native/release/build/cmd/main/main.exe" "lock_sync_mbt-$OS_NAME-$ARCH_NAME.exe"
     Write-Host "构建完成: lock_sync_mbt-$OS_NAME-$ARCH_NAME.exe" -ForegroundColor Green
     # --- 原有构建逻辑结束 ---
 
