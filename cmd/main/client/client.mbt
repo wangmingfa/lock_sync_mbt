@@ -79,10 +79,12 @@ pub async fn lock_screen() -> Unit {
       panic()
     }
   }
-  if code != 0 {
-    println("锁屏失败：")
-    println(output.text())
-  }
+  let text = output.text()
+  let has_output = !text.is_blank()
+  let msg = if code == 0 { "成功" } else { "失败" }
+  let msg = msg + (if has_output { ":" } else { "" })
+  println("锁屏\{msg}")
+  println(output.text())
 }
 
 ///|
