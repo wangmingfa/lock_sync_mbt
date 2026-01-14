@@ -6,6 +6,10 @@ const DESKFLOW_APP_PATH = "/Applications/Deskflow.app"
 
 ///|
 pub async fn run(server_config : @common.ServerConfig) -> Unit {
+  if @lib.is_linux() {
+    println("暂不支持linux作为服务端")
+    return
+  }
   while true {
     println("等待锁屏...")
     @lib.lock_listen(@lib.LockState::Locked)
@@ -15,6 +19,8 @@ pub async fn run(server_config : @common.ServerConfig) -> Unit {
     println("等待解锁...")
     @lib.lock_listen(@lib.LockState::UnLocked)
     println("已解锁🔓")
+    // 解锁后延迟启动应用，防止无法启动应用
+    @async.sleep(5000)
     start_app(DESKFLOW_APP_NAME, DESKFLOW_APP_PATH)
     @async.pause()
   }
@@ -38,38 +44,4 @@ async fn notify_to_all_clients(server_config : @common.ServerConfig) -> Unit {
       println("通知客户端 \{name}(\{url}) 失败")
     }
   }
-}
-
-///|
-async fn stop_app(app_name : String) -> Unit {
-  println("stopping \{app_name}...")
-  let (code, data) = @process.collect_stdout("pgrep", ["-fl", app_name])
-  guard code is 0 else { return }
-  let lines = data
-    .text()
-    .split("\n")
-    .map(line => line
-      .split(" ")
-      .filter(v => !v.is_blank())
-      .map(v => v.trim())
-      .collect())
-    .collect()
-  guard lines.length() > 0 else {
-    println("Couldn't find any running apps named \"\{app_name}\"")
-    return
-  }
-  for line in lines {
-    guard line is [pid, app_path, ..] else { continue }
-    let res = @process.run("kill", ["-9", pid.to_string()])
-    guard res is 0 else { continue }
-    println("关闭 [\{pid}]\{app_path} 成功")
-  }
-}
-
-///|
-async fn start_app(app_name : String, app_path : String) -> Unit {
-  println("starting \{app_name}...")
-  let res = @process.run("open", [app_path])
-  guard res is 0 else { return }
-  println("start \{app_name} success")
 }

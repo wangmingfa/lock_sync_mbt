@@ -1,13 +1,12 @@
 ///|
-type MacOSLockStateCallback = FuncRef[(Int, Int) -> Unit]
+type LockStateCallback = FuncRef[(Int, Int) -> Unit]
 
 ///|
-#cfg(not(platform="windows"))
-extern "C" fn macos_lock_wait_once(
+extern "C" fn lock_wait_once(
   flags : Int,
-  callback : MacOSLockStateCallback,
+  callback : LockStateCallback,
   userdata : Int,
-) -> Unit = "macos_lock_wait_once"
+) -> Unit = "lock_wait_once"
 
 ///|
 pub(all) enum LockState {
@@ -16,15 +15,7 @@ pub(all) enum LockState {
 }
 
 ///|
-#cfg(not(platform="windows"))
 pub fn lock_listen(listen_state : LockState) -> Unit {
   let flags = if listen_state is Locked { 1 } else { 0 }
-  macos_lock_wait_once(flags, fn(_, _) {  }, 0)
-}
-
-///|
-#cfg(platform="windows")
-pub fn lock_listen(_ : LockState) -> Unit {
-  println("暂不支持windows操作系统作为服务端")
-  panic()
+  lock_wait_once(flags, fn(_, _) {  }, 0)
 }

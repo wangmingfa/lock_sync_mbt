@@ -4,6 +4,8 @@
   ],
   "supported-targets": ["native"],
   "native-stub": [
-    "c/macos_lock.c"
+    "c/lock_listener_windows.c",
+    "c/lock_listener_macos.c",
+    "c/platform.c"
   ]
 }
