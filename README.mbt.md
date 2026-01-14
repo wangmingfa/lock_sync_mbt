@@ -74,7 +74,6 @@ moon run cmd/main client
   // 客户端配置
   "client": {
     "token": "认证令牌",
-    "os": "windows",          // 操作系统类型 windows/linux/macos
     "listen": "0.0.0.0:9123", // 监听地址和端口
     "allowed_servers": [
       "服务端IP"
@@ -88,7 +87,6 @@ moon run cmd/main client
 | `server.token` | 服务端认证令牌，用于通知客户端 |
 | `server.clients` | 要通知的客户端列表 |
 | `client.token` | 客户端认证令牌，用于验证服务端请求 |
-| `client.os` | 客户端操作系统类型 |
 | `client.listen` | 客户端监听地址和端口 |
 | `client.allowed_servers` | 允许连接的服务端 IP 列表 |
 

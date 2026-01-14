@@ -48,26 +48,29 @@ async fn handle_lock(
     println("不允许的客户端ip: \{ip}")
     return send_403(conn, data="IP Not Allowed")
   }
-  lock_screen(client_config.os)
+  lock_screen()
   send_200(conn)
 }
 
 ///|
-async fn lock_screen(os : String) -> Unit {
-  match os {
-    "windows" => {
+async fn lock_screen() -> Unit {
+  match @lib.get_platform() {
+    Windows => {
+      println("Windows锁屏")
       let _ = @process.run("rundll32.exe", ["user32.dll,LockWorkStation"])
 
     }
-    "linux" => {
+    Linux => {
+      println("Linux锁屏")
       let _ = @process.run("loginctl", ["lock-session"])
 
     }
-    "macos" => {
+    MacOS => {
+      println("MacOS锁屏")
       let _ = @process.run("CGSession", ["-suspend"])
 
     }
-    _ => println("不支持的操作系统 \{os}")
+    _ => println("不支持的操作系统，无法锁屏")
   }
 }
 

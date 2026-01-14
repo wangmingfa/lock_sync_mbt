@@ -13,7 +13,6 @@ pub struct ServerConfig {
 ///|
 pub struct ClientConfig {
   token : String
-  os : String
   listen : String
   allowed_servers : FixedArray[String]
 } derive(FromJson)
