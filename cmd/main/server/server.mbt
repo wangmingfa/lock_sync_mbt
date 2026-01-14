@@ -32,7 +32,7 @@ async fn notify_to_all_clients(server_config : @common.ServerConfig) -> Unit {
     let { name, url } = client
     let headers = {}
     headers[@client.AUTHORIZATION_KEY] = "\{@client.AUTHORIZATION_VALUE_PREFIX}\{server_config.token}"
-    let (res, _) = @http.post(url, b"", headers~) catch {
+    let (res, data) = @http.post(url, b"", headers~) catch {
       e => {
         println("请求 \{url} 失败: \{e}")
         continue
@@ -41,7 +41,9 @@ async fn notify_to_all_clients(server_config : @common.ServerConfig) -> Unit {
     if res.code == 200 {
       println("通知客户端 \{name}(\{url}) 成功")
     } else {
-      println("通知客户端 \{name}(\{url}) 失败")
+      println(
+        "通知客户端 \{name}(\{url}) 失败: \{res.reason} | \{data.text()}",
+      )
     }
   }
 }

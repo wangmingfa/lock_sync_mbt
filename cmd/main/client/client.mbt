@@ -38,11 +38,11 @@ async fn handle_lock(
     return send_403(conn, data="403 Not Allowed")
   }
   let expected = "\{AUTHORIZATION_VALUE_PREFIX}\{token}"
-  guard expected != authorization else { return send_403(conn) }
-  // 校验IP
-  guard get_header(headers, "x-forwarded-for") is Some(ip) else {
-    return send_403(conn, data="IP Not Allowed")
+  guard expected != authorization else {
+    return send_403(conn, data="Authentication Failed")
   }
+  // 校验IP（addr里面包含了ip和端口，格式为：127.0.0.1:8080）
+  let ip = conn.client_addr().to_string().split(":").collect()[0].to_string()
   let allowed_servers = client_config.allowed_servers
   guard allowed_servers.contains(ip) is true else {
     println("不允许的客户端ip: \{ip}")
