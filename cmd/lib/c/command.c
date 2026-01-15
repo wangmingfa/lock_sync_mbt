@@ -18,10 +18,11 @@ int run_command_stream(const char *cmd, line_cb cb, void *userdata)
     if (!fp)
         return -1;
 
-    uint8_t *buf = moonbit_make_bytes(1024, 0);
+    int buf_size = 1024;
+    uint8_t *buf = moonbit_make_bytes(buf_size, 0);
     size_t n;
 
-    while ((n = fread(buf, 1, sizeof(buf), fp)) > 0)
+    while ((n = fread(buf, 1, buf_size, fp)) > 0)
     {
         cb(buf, n, userdata);
     }
