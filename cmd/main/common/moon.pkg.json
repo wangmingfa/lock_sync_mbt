@@ -1,5 +1,6 @@
 {
   "import": [
-    "moonbitlang/async/fs"
+    "moonbitlang/async/fs",
+    "username/lock_sync_mbt/cmd/lib"
   ]
 }

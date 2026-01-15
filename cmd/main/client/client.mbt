@@ -58,9 +58,9 @@ pub async fn lock_screen() -> Unit {
     Windows => {
       println("Windows锁屏")
       // moonbit运行无法锁屏，改用c语言
-      // @process.collect_output_merged("rundll32.exe", [
-      //   "user32.dll,LockWorkStation",
-      // ])
+      /// @process.collect_output_merged("rundll32.exe", [
+      ///   "user32.dll,LockWorkStation",
+      /// ])
       @lib.run_command("rundll32.exe user32.dll,LockWorkStation")
     }
     Linux => {

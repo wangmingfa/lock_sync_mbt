@@ -37,7 +37,7 @@ async fn load_config(config_type : ConfgType) -> (ServerConfig?, ClientConfig?) 
   }
   let file_content = @fs.read_file(config_file_path).json()
   guard file_content is Object(config)
-  println("使用配置文件 \{config_file_path}")
+  @lib.info("使用配置文件 \{config_file_path}")
   match config_type {
     Server => {
       guard config.get("server") is Some(config)

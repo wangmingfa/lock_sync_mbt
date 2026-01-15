@@ -4,7 +4,8 @@
     "moonbitlang/async",
     "username/lock_sync_mbt/cmd/main/server",
     "username/lock_sync_mbt/cmd/main/client",
-    "username/lock_sync_mbt/cmd/main/common"
+    "username/lock_sync_mbt/cmd/main/common",
+    "username/lock_sync_mbt/cmd/lib"
   ],
   "link": {
     "native": {

@@ -11,16 +11,17 @@ pub async fn run(server_config : @common.ServerConfig) -> Unit {
     return
   }
   while true {
-    println("等待锁屏...")
+    @lib.info("等待锁屏...")
     @lib.lock_listen(@lib.LockState::Locked)
-    println("已锁屏🔒，通知其它客户端锁屏并关闭Deskflow")
+    @lib.info("已锁屏🔒，通知其它客户端锁屏并关闭Deskflow")
     notify_to_all_clients(server_config)
     stop_app(DESKFLOW_APP_NAME)
-    println("等待解锁...")
+    @async.sleep(1000)
+    // 等待解锁
+    @lib.info("等待解锁...")
     @lib.lock_listen(@lib.LockState::UnLocked)
-    println("已解锁🔓")
-    // 解锁后延迟启动应用，防止无法启动应用
-    @async.sleep(2000)
+    @lib.info("已解锁🔓")
+    @async.sleep(1000)
     start_app(DESKFLOW_APP_NAME, DESKFLOW_APP_PATH)
     @async.pause()
   }

@@ -69,24 +69,24 @@ async fn get_running_apps(app_name : String) -> ReadOnlyArray[App] {
 
 ///|
 async fn stop_app(app_name : String) -> Unit {
-  println("stopping \{app_name}...")
+  @lib.info("stopping \{app_name}...")
   let apps = get_running_apps(app_name)
   if apps.is_empty() {
-    println("could not find running apps named \"\{app_name}\"")
+    @lib.info("could not find running apps named \"\{app_name}\"")
     return
   }
   for app in apps {
     let { pid, process_name } = app
     let res = @process.run("kill", ["-9", pid.to_string()])
     guard res is 0 else { continue }
-    println("关闭 [\{pid}]\{process_name} 成功")
+    @lib.info("关闭 [\{pid}]\{process_name} 成功")
   }
 }
 
 ///|
 async fn start_app(app_name : String, app_path : String) -> Unit {
-  println("starting \{app_name}...")
+  @lib.info("starting \{app_name}...")
   let res = @process.run("open", [app_path])
   guard res is 0 else { return }
-  println("start \{app_name} success")
+  @lib.info("start \{app_name} success")
 }

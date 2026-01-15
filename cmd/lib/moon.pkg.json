@@ -9,6 +9,7 @@
     "c/lock_listener_macos.c",
     "c/lock_listener_linux.c",
     "c/platform.c",
-    "c/command.c"
+    "c/command.c",
+    "c/time.c"
   ]
 }

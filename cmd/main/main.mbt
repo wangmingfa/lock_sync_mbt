@@ -2,7 +2,8 @@
 async fn main {
   guard @env.current_dir() is Some(dir) else { return }
   let args = @env.args()
-  println("dir: \{dir}\nargs: \{args}")
+  @lib.info("dir: \{dir}")
+  @lib.info("args: \{args}")
   if args.length() < 2 {
     println(
       (

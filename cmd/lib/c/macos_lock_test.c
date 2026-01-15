@@ -1,4 +1,4 @@
-#include "macos_lock.h"
+#include "lock_listener.h"
 #include <stdio.h>
 #include "log.c"
 
@@ -21,15 +21,15 @@ int main(void)
     LOG("[test] waiting for LOCK only...");
     fflush(stdout);
 
-    macos_lock_wait_once(
-        MACOS_WAIT_LOCK,
+    lock_wait_once(
+        LOCK_WAIT_LOCK,
         on_event,
         NULL);
 
     // 监听解锁
     LOG("[test] waiting for UNLOCK only...");
-    macos_lock_wait_once(
-        MACOS_WAIT_UNLOCK,
+    lock_wait_once(
+        LOCK_WAIT_UNLOCK,
         on_event,
         NULL);
 
