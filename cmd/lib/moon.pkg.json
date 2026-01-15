@@ -1,12 +1,14 @@
 {
   "is-main": false,
   "import": [
+    "moonbitlang/async/io"
   ],
   "supported-targets": ["native"],
   "native-stub": [
     "c/lock_listener_windows.c",
     "c/lock_listener_macos.c",
     "c/lock_listener_linux.c",
-    "c/platform.c"
+    "c/platform.c",
+    "c/command.c"
   ]
 }

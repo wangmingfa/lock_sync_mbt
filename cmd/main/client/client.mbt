@@ -57,9 +57,11 @@ pub async fn lock_screen() -> Unit {
   let (code, output) = match @lib.get_platform() {
     Windows => {
       println("Windows锁屏")
-      @process.collect_output_merged("rundll32.exe", [
-        "user32.dll,LockWorkStation",
-      ])
+      // moonbit运行无法锁屏，改用c语言
+      // @process.collect_output_merged("rundll32.exe", [
+      //   "user32.dll,LockWorkStation",
+      // ])
+      @lib.run_command("rundll32.exe user32.dll,LockWorkStation")
     }
     Linux => {
       println("Linux锁屏")
