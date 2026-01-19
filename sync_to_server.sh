@@ -3,7 +3,7 @@ set -e
 
 # ===== 配置区 =====
 REMOTE_USER="wmf"
-REMOTE_HOST="wmf.com"
+REMOTE_HOST="wmf2.com"
 REMOTE_DIR="/home/wmf/code/lock_sync_mbt"
 SSH_PORT=8022
 # ==================
